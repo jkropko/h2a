@@ -40,3 +40,7 @@ vignettes/*.pdf
 
 # Data
 .csv
+/data/
+/original/
+.xlsx
+/working/
