@@ -5,4 +5,5 @@ data <- read_csv("working/data_geocode.csv")
 
 leaflet(data = data) %>% 
   addTiles() %>%
-  addMarkers(~lon, ~lat)
+  addMarkers(~lon, ~lat, clusterOptions = markerClusterOptions())
+
