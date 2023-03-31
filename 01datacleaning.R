@@ -1,19 +1,23 @@
 #LOAD LIBRARIES
 library(tidyverse)
-library(readxl)
 
 #LOAD DATA
-get_files <- list.files("original/DOL ETA Data/")
-file_list <- lapply(get_files, function(x)
-  read_excel(paste0("original/DOL ETA Data/", x), col_types = "text"))
-colnames_list <- lapply(file_list, names)
-all_names <- unique(unlist(colnames_list))
-file_var_mat <- sapply(colnames_list, function(x) (all_names %in% x * 1)) 
-dimnames(file_var_mat) <- list(all_names, get_files)
-file_var_df <- data.frame(file_var_mat)
-common_vars <- rownames(filter(file_var_df, rowMeans(file_var_df) == 1))
-data_pooled <- lapply(file_list, select, all_of(common_vars)) %>%
-  bind_rows()
-write_csv(data_pooled, "working/data_pooled.csv")
+#h2a
+dat_h2a <- read_csv("working/DOL_H-2A_Data_FY21_22.csv") %>%
+  mutate(TYPE = "H-2A") %>%
+  select(TYPE, CASE_NUMBER, CASE_STATUS, contains("WORKSITE"))
+
+#h2b
+dat_h2b <- read_csv("working/DOL_H-2B_Data_FY21_22.csv") %>%
+  mutate(TYPE = "H-2B") %>%
+  select(TYPE, CASE_NUMBER, CASE_STATUS, contains("WORKSITE"))
+
+#append
+dat_pool <- bind_rows(dat_h2a, dat_h2b) %>%
+  filter(!CASE_STATUS %in% c("Determination Issued - Denied", 
+                             "Determination Issued - Rejected",
+                             "Determination Issued - Withdrawn",
+                             "Withdrawn"))
+write_csv(dat_pool, "working/dat_pool.csv")
 
 
