@@ -3,6 +3,7 @@ library(leaflet)
 library(htmlwidgets)
 library(htmltools)
 
+#LOAD DATA
 data <- read_csv("working/data_geocode.csv")
 
 data$address <- paste(data$WORKSITE_ADDRESS, data$WORKSITE_CITY,
